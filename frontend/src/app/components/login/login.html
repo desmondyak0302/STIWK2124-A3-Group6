@@ -1,0 +1,51 @@
+<div class="login-page">
+  <div class="login-visual">
+    <div class="visual-overlay"></div>
+    <div class="visual-content">
+      <span class="badge-tag">Group 6 | Web Engineering</span>
+      <h1>Accessible<br>Reading List</h1>
+      <p>Sign in to manage the shared book catalog — add, edit, and curate the collection for everyone.</p>
+    </div>
+  </div>
+
+  <div class="login-form-side">
+    <div class="login-card">
+      <h2>Staff Login</h2>
+      <p class="subtitle">Login to add, edit, or delete books</p>
+
+      <form (ngSubmit)="onLogin()">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            [(ngModel)]="username"
+            placeholder="Enter username"
+            autocomplete="username"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="Enter password"
+            autocomplete="current-password"
+          />
+        </div>
+
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <button type="submit" class="login-btn">Login</button>
+      </form>
+
+      <a routerLink="/books" class="back-link">← Back to book list</a>
+    </div>
+  </div>
+</div>

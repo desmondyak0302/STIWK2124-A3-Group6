@@ -1,6 +1,6 @@
 <div class="dashboard-bg d-flex flex-column justify-content-between min-vh-100">
   <div class="container py-5">
-    
+
     <div class="row mb-5 text-center">
       <div class="col">
         <span class="badge rounded-pill premium-tag mb-3 px-3 py-2">
@@ -10,10 +10,21 @@
         <p class="text-secondary mx-auto" style="max-width: 600px;">
           Browse, search, and manage your collective repository of books.
         </p>
-        <div class="mt-4">
-          <a routerLink="/books/add" class="btn btn-gradient-primary px-4 py-3 rounded-pill">
+
+        <div class="d-flex justify-content-center gap-3 mt-4">
+          <button class="btn btn-gradient-primary px-4 py-3 rounded-pill" (click)="onAddBookClick()">
             <i class="bi bi-plus-lg me-2"></i> Add New Book
-          </a>
+          </button>
+
+          <button *ngIf="!authService.isLoggedIn()" routerLink="/login"
+                  class="btn btn-outline-secondary px-4 py-3 rounded-pill">
+            <i class="bi bi-box-arrow-in-right me-2"></i> Login
+          </button>
+
+          <button *ngIf="authService.isLoggedIn()" (click)="onLogout()"
+                  class="btn btn-outline-danger px-4 py-3 rounded-pill">
+            <i class="bi bi-box-arrow-right me-2"></i> Logout ({{ authService.getUsername() }})
+          </button>
         </div>
       </div>
     </div>
@@ -25,10 +36,10 @@
             <span class="input-group-text bg-transparent border-0">
               <i class="bi bi-search"></i>
             </span>
-            <input 
-              type="text" 
-              class="form-control bg-transparent border-0 py-3" 
-              placeholder="Search by title, author, or category..." 
+            <input
+              type="text"
+              class="form-control bg-transparent border-0 py-3"
+              placeholder="Search by title, author, or category..."
               [(ngModel)]="searchQuery"
               (keyup.enter)="onSearch()">
             <button class="btn btn-gradient-primary px-4" (click)="onSearch()">
@@ -49,25 +60,25 @@
               </span>
               <div class="card-glow-dot"></div>
             </div>
-            
+
             <h3 class="card-title fw-bold mb-1">{{ book.title }}</h3>
             <p class="text-secondary mb-3">by {{ book.author }}</p>
             <p class="card-text text-secondary flex-grow-1 mb-4">
               {{ book.shortDescription || book.short_description || 'No description available for this volume.' }}
             </p>
-            
+
             <div class="d-flex justify-content-between align-items-center pt-3 border-top-glass">
               <small class="text-muted">ID: {{ book.bookID || book.id }}</small>
               <div class="d-flex gap-2">
-                <a [routerLink]="['/books/edit', book.bookID || book.id]" 
-                   class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                <button class="btn btn-sm btn-outline-primary rounded-pill px-3"
+                        (click)="onEditBookClick(book.bookID || book.id)">
                   <i class="bi bi-pencil-square"></i> Edit
-                </a>
-                <button class="btn btn-sm btn-outline-danger rounded-pill px-3" 
+                </button>
+                <button class="btn btn-sm btn-outline-danger rounded-pill px-3"
                         (click)="onDeleteBook(book.bookID || book.id)">
                   <i class="bi bi-trash3"></i> Delete
                 </button>
-                <button class="btn btn-sm btn-outline-info rounded-pill px-3" 
+                <button class="btn btn-sm btn-outline-info rounded-pill px-3"
                         (click)="readAloud(book.title, book.author)">
                   <i class="bi bi-volume-up-fill"></i> Read Aloud
                 </button>
@@ -83,16 +94,16 @@
         <i class="bi bi-book-half display-1 text-primary"></i>
         <h3 class="fw-bold mt-3">No Books Found</h3>
         <p class="text-secondary">Your collection is empty or matches no query parameters.</p>
-        <a routerLink="/books/add" class="btn btn-gradient-primary mt-3">
+        <button class="btn btn-gradient-primary mt-3" (click)="onAddBookClick()">
           <i class="bi bi-plus-lg me-2"></i> Add New Book
-        </a>
+        </button>
       </div>
     </div>
 
     <nav *ngIf="books && books.length > 0 && totalPages > 1" class="mt-5">
       <ul class="pagination justify-content-center gap-3">
         <li>
-          <button class="page-link btn-pagination-glass rounded-3 px-4 py-2" 
+          <button class="page-link btn-pagination-glass rounded-3 px-4 py-2"
                   [disabled]="currentPage === 0"
                   (click)="goToPreviousPage()">
             Previous
@@ -104,7 +115,7 @@
           </span>
         </li>
         <li>
-          <button class="page-link btn-pagination-glass rounded-3 px-4 py-2" 
+          <button class="page-link btn-pagination-glass rounded-3 px-4 py-2"
                   [disabled]="currentPage >= totalPages - 1"
                   (click)="goToNextPage()">
             Next
