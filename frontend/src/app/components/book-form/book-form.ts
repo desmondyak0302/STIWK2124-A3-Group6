@@ -5,11 +5,11 @@ import { FormsModule } from '@angular/forms';
 import { BookService } from '../../services/book';
 
 @Component({
-  selector: 'app-book-form',
+  selector: 'book-form',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './book-form.html',
-  styleUrls: ['./book-form.css']
+  imports: [CommonModule, RouterModule, FormsModule], // FormsModule added directly here clears the red lines!
+  templateUrl: 'book-form.html',
+  styleUrls: ['book-form.css']
 })
 export class BookForm implements OnInit {
   book: any = {
@@ -22,7 +22,7 @@ export class BookForm implements OnInit {
   isEditMode: boolean = false;
   bookId?: number;
   
-  // Track which fields have been touched/visited
+  // Track fields touched state
   touchedFields = {
     title: false,
     author: false,
@@ -52,7 +52,6 @@ export class BookForm implements OnInit {
           title: data.title || '',
           author: data.author || '',
           category: data.category || '',
-          // Maps both possible JSON formats coming out of Spring Boot securely
           shortDescription: data.shortDescription || data.short_description || ''
         };
       },
@@ -64,12 +63,10 @@ export class BookForm implements OnInit {
     });
   }
 
-  // Mark field as touched when user interacts
   markTouched(field: string): void {
     this.touchedFields[field as keyof typeof this.touchedFields] = true;
   }
 
-  // Mark all fields as touched when trying to submit
   markAllTouched(): void {
     this.touchedFields = {
       title: true,
@@ -79,7 +76,6 @@ export class BookForm implements OnInit {
     };
   }
 
-  // Validation methods - return true if valid
   isTitleValid(): boolean {
     return !!(this.book.title && this.book.title.trim().length >= 2);
   }
@@ -93,7 +89,9 @@ export class BookForm implements OnInit {
   }
 
   isDescriptionValid(): boolean {
-    return !!(this.book.shortDescription && this.book.shortDescription.trim().length >= 10);
+    if (!this.book.shortDescription) return false;
+    const len = this.book.shortDescription.trim().length;
+    return len >= 10 && len <= 255; // Securely checks database char bounds
   }
 
   isFormValid(): boolean {
@@ -103,12 +101,10 @@ export class BookForm implements OnInit {
            this.isDescriptionValid();
   }
 
-  // Should show error for a field (only if touched)
   showTitleError(): boolean {
     return this.touchedFields.title && !this.isTitleValid();
   }
 
-  // Helper getters to check if a field is invalid for dynamic CSS class bindings
   showAuthorError(): boolean {
     return this.touchedFields.author && !this.isAuthorValid();
   }
@@ -122,13 +118,12 @@ export class BookForm implements OnInit {
   }
 
   saveBook(): void {
-    this.markAllTouched(); // Ensure validation flags light up if missing criteria
+    this.markAllTouched();
     
     if (!this.isFormValid()) {
-      return; // Stop execution if validation fails
+      return; 
     }
 
-    // Build the payload mapping both naming convention variants for optimal backend compatibility
     const payload = {
       title: this.book.title,
       author: this.book.author,

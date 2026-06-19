@@ -106,6 +106,7 @@
               </label>
               <textarea class="form-control" 
                         rows="4"
+                        maxlength="255"
                         [class.is-invalid]="showDescriptionError()"
                         [class.is-valid]="!showDescriptionError() && isDescriptionValid() && book.shortDescription !== ''"
                         [(ngModel)]="book.shortDescription" 
@@ -117,14 +118,14 @@
               
               <div *ngIf="showDescriptionError()" class="invalid-feedback d-block">
                 <i class="bi bi-exclamation-triangle-fill me-1"></i>
-                Description is required (minimum 10 characters)
+                Description is required (between 10 and 255 characters)
                 <span *ngIf="book.shortDescription?.length > 0"> - Currently: {{ book.shortDescription.length }}/10</span>
               </div>
               <div *ngIf="!showDescriptionError() && isDescriptionValid() && book.shortDescription !== ''" class="valid-feedback d-block">
                 <i class="bi bi-check-circle-fill me-1"></i>
-                Description looks good! ({{ book.shortDescription?.length }}/10)
+                Description looks good! ({{ book.shortDescription?.length }}/255)
               </div>
-              <small class="text-muted">Minimum 10 characters</small>
+              <small class="text-muted">Minimum 10 characters, maximum 255 characters</small>
             </div>
 
             <div *ngIf="(touchedFields.title || touchedFields.author || touchedFields.category || touchedFields.shortDescription) && !isFormValid()" class="alert alert-danger mb-4">
@@ -134,7 +135,7 @@
                 <li *ngIf="showTitleError()">✗ Title is required (minimum 2 characters)</li>
                 <li *ngIf="showAuthorError()">✗ Author is required (minimum 2 characters)</li>
                 <li *ngIf="showCategoryError()">✗ Please select a category</li>
-                <li *ngIf="showDescriptionError()">✗ Description must be at least 10 characters</li>
+                <li *ngIf="showDescriptionError()">✗ Description must be between 10 and 255 characters</li>
               </ul>
             </div>
 

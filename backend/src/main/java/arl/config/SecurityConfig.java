@@ -1,4 +1,4 @@
- package arl.config;
+package arl.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,15 +21,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/books/**").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/books/**").authenticated()
-                .requestMatchers(HttpMethod.DELETE, "/api/books/**").authenticated()
-                .anyRequest().authenticated()
-            )
-            .httpBasic(Customizer.withDefaults());
+                // 1. Disable CSRF to allow Angular POST requests to go through
+                .csrf(csrf -> csrf.disable())
+
+                // 2. Configure endpoint authentication rules
+                .authorizeHttpRequests(auth -> auth
+                        // Allow anyone to access the registration and login APIs without logging in
+                        // first
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // Existing rules for managing your group's book catalog
+                        .requestMatchers(HttpMethod.GET, "/api/books/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/books/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/books/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/books/**").authenticated()
+
+                        // Any other paths not declared above will still require authorization
+                        .anyRequest().authenticated())
+                .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
@@ -37,9 +46,9 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails admin = User.withUsername("admin")
-            .password(passwordEncoder().encode("password123"))
-            .roles("ADMIN")
-            .build();
+                .password(passwordEncoder().encode("password123"))
+                .roles("ADMIN")
+                .build();
         return new InMemoryUserDetailsManager(admin);
     }
 

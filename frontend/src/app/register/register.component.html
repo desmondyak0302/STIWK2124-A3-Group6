@@ -1,0 +1,40 @@
+<div class="register-card-container">
+  <div class="register-card">
+    <h2>Create New Account</h2>
+    <p class="subtitle">Fill in details to save your account to the database</p>
+
+    <div *ngIf="errorMessage" class="alert alert-error">
+      ⚠️ {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="alert alert-success">
+      ✅ {{ successMessage }}
+    </div>
+
+    <form (ngSubmit)="onRegister()">
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input 
+          type="text" 
+          id="username" 
+          [(ngModel)]="accountData.username" 
+          name="username" 
+          placeholder="Enter custom username" 
+          required />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input 
+          type="password" 
+          id="password" 
+          [(ngModel)]="accountData.password" 
+          name="password" 
+          placeholder="Enter secure password" 
+          required />
+      </div>
+
+      <button type="submit" class="btn-submit">Submit Account Data</button>
+    </form>
+  </div>
+</div>
