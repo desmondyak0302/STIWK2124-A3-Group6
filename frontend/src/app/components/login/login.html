@@ -13,6 +13,14 @@
       <h2>Staff Login</h2>
       <p class="subtitle">Login to add, edit, or delete books</p>
 
+      <div class="alert alert-success" *ngIf="successMessage">
+        {{ successMessage }}
+      </div>
+
+      <div class="alert alert-error" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
       <form (ngSubmit)="onLogin()">
         <div class="form-group">
           <label for="username">Username</label>
@@ -23,6 +31,7 @@
             [(ngModel)]="username"
             placeholder="Enter username"
             autocomplete="username"
+            required
           />
         </div>
 
@@ -35,11 +44,8 @@
             [(ngModel)]="password"
             placeholder="Enter password"
             autocomplete="current-password"
+            required
           />
-        </div>
-
-        <div class="error-message" *ngIf="errorMessage">
-          {{ errorMessage }}
         </div>
 
         <button type="submit" class="login-btn">Login</button>

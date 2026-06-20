@@ -12,19 +12,36 @@ import { AuthService } from '../../services/auth';
   styleUrls: ['./login.css']
 })
 export class LoginComponent {
-  username: string = '';
-  password: string = '';
-  errorMessage: string = '';
+  username = '';
+  password = '';
+  errorMessage = '';
+  successMessage = ''; // Added tracking variable for notifications
 
   constructor(private authService: AuthService, private router: Router) {}
 
   onLogin(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
+
     if (!this.username.trim() || !this.password.trim()) {
       this.errorMessage = 'Please enter both username and password.';
       return;
     }
 
-    this.authService.login(this.username, this.password);
-    this.router.navigate(['/books']);
+    // Subscribing to your backend request stream to catch responses cleanly
+    this.authService.login(this.username, this.password).subscribe({
+      next: (response: any) => {
+        this.successMessage = '🔑 Login successful! Access granted.';
+        
+        // Let the user see the alert briefly, then push them to dashboard
+        setTimeout(() => {
+          this.router.navigate(['/books']);
+        }, 1500);
+      },
+      error: (err: any) => {
+        console.error('Login failed', err);
+        this.errorMessage = '❌ Invalid credentials. Please check your username and password.';
+      }
+    });
   }
 }

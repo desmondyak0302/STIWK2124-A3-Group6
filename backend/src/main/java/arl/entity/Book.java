@@ -25,26 +25,47 @@ public class Book {
     private String shortDescription;
 
     // Default constructor required by JPA
-    public Book() {}
+    public Book() {
+    }
 
     // Getters and Setters
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
-    public void setId(Long id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getTitle() { return title; }
+    public String getTitle() {
+        return title;
+    }
 
-    public void setTitle(String title) { this.title = title; }
-    
-    public String getAuthor() { return author; }
-    
-    public void setAuthor(String author) { this.author = author; }
-    
-    public String getCategory() { return category; }
-    
-    public void setCategory(String category) { this.category = category; }
-    
-    public String getShortDescription() { return shortDescription; }
-    
-    public void setShortDescription(String shortDescription) { this.shortDescription = shortDescription; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getShortDescription() {
+        return shortDescription;
+    }
+
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+    }
 }

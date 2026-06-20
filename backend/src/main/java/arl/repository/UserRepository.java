@@ -7,6 +7,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    // Custom query method to find users by username during login checks
+    // Custom query loader to pull database user profiles by username
     Optional<User> findByUsername(String username);
 }

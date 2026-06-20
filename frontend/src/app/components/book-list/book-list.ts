@@ -96,9 +96,11 @@ export class BookListComponent implements OnInit {
     this.router.navigate(['/books/edit', id]);
   }
 
+  // Updated logout method to handle instant view redirection
   onLogout(): void {
     this.authService.logout();
     alert('Logged out successfully.');
+    this.router.navigate(['/login']); // Redirects user directly back to staff login page
   }
 
   goToNextPage(): void {

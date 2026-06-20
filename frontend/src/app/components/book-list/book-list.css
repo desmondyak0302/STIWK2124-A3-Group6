@@ -150,7 +150,6 @@
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-/* Add these styles to your existing book-list.css */
 
 /* Action buttons styling */
 .action-buttons .btn {
@@ -193,7 +192,9 @@
 .btn-gradient-primary.rounded-pill:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3);
-}/* Smooth page transition */
+}
+
+/* Smooth page transition */
 .row.g-4 {
   transition: opacity 0.2s ease;
 }

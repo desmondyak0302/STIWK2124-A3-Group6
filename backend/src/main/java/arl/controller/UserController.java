@@ -21,6 +21,7 @@ public class UserController {
             User savedUser = userService.registerUser(user);
             return ResponseEntity.ok(savedUser);
         } catch (RuntimeException e) {
+            // Returns a clean 400 Bad Request if the username already exists
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
@@ -31,6 +32,7 @@ public class UserController {
         if (isAuthenticated) {
             return ResponseEntity.ok(Map.of("message", "Login successful!", "status", "success"));
         } else {
+            // Returns a 401 Unauthorized block on validation failures
             return ResponseEntity.status(401).body(Map.of("message", "Invalid username or password", "status", "fail"));
         }
     }
