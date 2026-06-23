@@ -15,7 +15,9 @@ export class RegisterComponent {
   
   accountData = {
     username: '',
-    password: ''
+    email: '',
+    password: '',
+    role: 'STUDENT' // Default value
   };
 
   errorMessage: string = '';
@@ -27,26 +29,25 @@ export class RegisterComponent {
     this.errorMessage = '';
     this.successMessage = '';
 
-    if (!this.accountData.username || !this.accountData.password) {
+    if (!this.accountData.username || !this.accountData.email || !this.accountData.password) {
       this.errorMessage = 'Please fill out all required fields.';
       return;
     }
 
+    // Debugging: Log the data before sending to ensure the role is correct
+    console.log('Sending Registration Data:', this.accountData);
+
     this.authService.register(this.accountData).subscribe({
       next: (response: any) => {
-        console.log('User saved successfully in arl_db:', response);
-        this.successMessage = '✅ Account created successfully! Redirecting to login...';
-        
-        this.accountData = { username: '', password: '' };
+        this.successMessage = '✅ Account created successfully! Redirecting...';
+        this.accountData = { username: '', email: '', password: '', role: 'STUDENT' };
 
-        // Redirect to login page after a 2-second delay
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 2000);
       },
       error: (err: any) => {
-        console.error('Network Error while saving user:', err);
-        this.errorMessage = err.error?.message || '❌ Failed to save account. Server might be down.';
+        this.errorMessage = err.error?.message || '❌ Failed to save account.';
       }
     });
   }

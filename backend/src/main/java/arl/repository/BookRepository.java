@@ -7,11 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BookRepository extends JpaRepository<Book, Long> {
-    
+public interface BookRepository extends JpaRepository<Book, Integer> { // FIXED: Changed Long to Integer
+
     /**
      * Student B Task: Search functionality.
-     * This method searches for books where the title contains the keyword 'q', 
+     * This method searches for books where the title contains the keyword 'title',
      * ignoring case, and returns a paginated result.
      */
     Page<Book> findByTitleContainingIgnoreCase(String title, Pageable pageable);

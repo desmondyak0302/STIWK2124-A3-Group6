@@ -6,52 +6,75 @@ import { Observable, tap } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  // Your Spring Boot backend base URL
   private apiUrl = 'http://localhost:8080/api/auth'; 
-
-  private currentUsername: string | null = null;
-  private isUserAuthenticated = false;
 
   constructor(private http: HttpClient) {}
 
-  // 1. REGISTER: Sends account data to the backend database
+  /**
+   * 1. REGISTER: Sends account data including the selected role to the backend
+   */
   register(user: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, user);
   }
 
-  // 2. LOGIN: Fixed to accept two string arguments from login.ts
+  /**
+   * 2. LOGIN: Authenticates user and saves the role to localStorage for permission checks
+   */
   login(username: string, password: string): Observable<any> {
     const credentials = { username: username, password: password };
     return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
       tap((response: any) => {
-        // If login is successful, save the state locally in the app
-        if (response && response.status === 'success') {
-          this.currentUsername = username;
-          this.isUserAuthenticated = true;
+        if (response) {
+          // Generate standard Base64 Basic Auth token
+          const authValue = 'Basic ' + btoa(`${username}:${password}`);
+          
+          // Save credentials and role to localStorage
+          localStorage.setItem('currentUsername', username);
+          localStorage.setItem('authHeader', authValue);
+          
+          // Capture the role from your backend response
+          if (response.role) {
+            localStorage.setItem('userRole', response.role);
+          }
+          
+          console.log('✅ Login successful. Role stored:', response.role);
         }
       })
     );
   }
 
-  // 3. LOGOUT: Clears local session
+  /**
+   * 3. LOGOUT: Wipes all user session data
+   */
   logout(): void {
-    this.currentUsername = null;
-    this.isUserAuthenticated = false;
+    localStorage.clear();
   }
 
-  isLoggedIn(): boolean {
-    return this.isUserAuthenticated;
-  }
-
-  // Restored to fix the compilation crash in login.ts
-  getCredentials(): string | null {
-    if (!this.currentUsername) {
-      return null;
+  /**
+   * Returns the user's role (used to show/hide Admin buttons)
+   */
+  getUserRole(): string | null {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return localStorage.getItem('userRole');
     }
-    return btoa(`${this.currentUsername}:`);
+    return null;
+  }
+
+  /**
+   * Check if user is logged in
+   */
+  isLoggedIn(): boolean {
+    return this.getAuthHeader() !== null;
+  }
+
+  getAuthHeader(): string | null {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return localStorage.getItem('authHeader');
+    }
+    return null;
   }
 
   getUsername(): string | null {
-    return this.currentUsername;
+    return localStorage.getItem('currentUsername');
   }
 }

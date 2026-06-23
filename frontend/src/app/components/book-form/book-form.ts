@@ -7,7 +7,7 @@ import { BookService } from '../../services/book';
 @Component({
   selector: 'book-form',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule], // FormsModule added directly here clears the red lines!
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: 'book-form.html',
   styleUrls: ['book-form.css']
 })
@@ -22,7 +22,6 @@ export class BookForm implements OnInit {
   isEditMode: boolean = false;
   bookId?: number;
   
-  // Track fields touched state
   touchedFields = {
     title: false,
     author: false,
@@ -91,7 +90,7 @@ export class BookForm implements OnInit {
   isDescriptionValid(): boolean {
     if (!this.book.shortDescription) return false;
     const len = this.book.shortDescription.trim().length;
-    return len >= 10 && len <= 255; // Securely checks database char bounds
+    return len >= 10 && len <= 255; 
   }
 
   isFormValid(): boolean {
@@ -128,8 +127,7 @@ export class BookForm implements OnInit {
       title: this.book.title,
       author: this.book.author,
       category: this.book.category,
-      shortDescription: this.book.shortDescription,
-      short_description: this.book.shortDescription
+      shortDescription: this.book.shortDescription
     };
 
     if (this.isEditMode && this.bookId) {
@@ -140,7 +138,7 @@ export class BookForm implements OnInit {
         },
         error: (err) => {
           console.error('Update operation failed:', err);
-          alert('Update failed');
+          alert('Update failed. Verify your connection permission states.');
         }
       });
     } else {
@@ -151,7 +149,7 @@ export class BookForm implements OnInit {
         },
         error: (err) => {
           console.error('Add operation failed:', err);
-          alert('Add failed');
+          alert('Add failed. Verify your connection permission states.');
         }
       });
     }

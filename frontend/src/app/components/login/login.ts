@@ -15,7 +15,7 @@ export class LoginComponent {
   username = '';
   password = '';
   errorMessage = '';
-  successMessage = ''; // Added tracking variable for notifications
+  successMessage = ''; 
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -28,20 +28,28 @@ export class LoginComponent {
       return;
     }
 
-    // Subscribing to your backend request stream to catch responses cleanly
+    // Connects to your backend validation stream via AuthService
     this.authService.login(this.username, this.password).subscribe({
       next: (response: any) => {
         this.successMessage = '🔑 Login successful! Access granted.';
         
-        // Let the user see the alert briefly, then push them to dashboard
+        // Brief message delay before moving the user to the catalog dashboard
         setTimeout(() => {
           this.router.navigate(['/books']);
-        }, 1500);
+        }, 1200);
       },
       error: (err: any) => {
         console.error('Login failed', err);
-        this.errorMessage = '❌ Invalid credentials. Please check your username and password.';
+        // Extracts structural error response string messages safely from backend maps
+        this.errorMessage = err.error?.message || '❌ Invalid credentials. Please check your username and password.';
       }
     });
+  }
+
+  /**
+   * Helper method to jump to the registration form page instantly
+   */
+  goToRegister(): void {
+    this.router.navigate(['/register']);
   }
 }

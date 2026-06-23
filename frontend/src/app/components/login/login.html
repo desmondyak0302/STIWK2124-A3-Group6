@@ -48,7 +48,13 @@
           />
         </div>
 
-        <button type="submit" class="login-btn">Login</button>
+        <div class="button-action-stack">
+          <button type="submit" class="login-btn">Login</button>
+          
+          <button type="button" class="register-toggle-btn" (click)="goToRegister()">
+            Create New Account
+          </button>
+        </div>
       </form>
 
       <a routerLink="/books" class="back-link">← Back to book list</a>

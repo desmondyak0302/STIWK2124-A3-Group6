@@ -2,7 +2,6 @@ package arl.controller;
 
 import arl.entity.Book;
 import arl.service.BookService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,72 +10,80 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/books")
-@CrossOrigin(origins = "*") // Allows the frontend to connect without CORS errors[cite: 1]
+@CrossOrigin(origins = "http://localhost:4200")
 public class BookController {
 
     @Autowired
     private BookService bookService;
 
-    // Creates a new book; @Valid ensures inputs meet the requirements in Book.java[cite: 1]
-    @PostMapping
-    public ResponseEntity<Book> createBook(@Valid @RequestBody Book book) {
-        Book savedBook = bookService.createBook(book);
-        return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
-    }
-
     /**
-     * STUDENT B TASK: ADVANCED ENDPOINT
-     * This handles three things: 
-     * 1. Filtering by keyword (q)
-     * 2. Page numbering (page)
-     * 3. Items per page (size)
-     * Example: /api/books?q=Harry&page=0&size=5[cite: 1]
+     * Handles pagination and search text keywords seamlessly.
+     * Accessible via: GET http://localhost:8080/api/books?page=0&size=6
      */
     @GetMapping
     public ResponseEntity<Page<Book>> getAllBooks(
-            @RequestParam(required = false) String q, // Optional search keyword
-            @RequestParam(defaultValue = "0") int page, // Default to first page
-            @RequestParam(defaultValue = "10") int size // Default to 10 books
-    ) {
+            @RequestParam(required = false) String q,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
         Pageable pageable = PageRequest.of(page, size);
-        
-        // If the user provided a search term, use the search logic[cite: 1]
-        if (q != null && !q.isEmpty()) {
-            return ResponseEntity.ok(bookService.searchBooks(q, pageable));
+
+        // If the user provided a search term, call the custom query method
+        if (q != null && !q.trim().isEmpty()) {
+            return ResponseEntity.ok(bookService.searchBooksByTitle(q, pageable));
         }
-        // Otherwise, just return a paginated list of all books[cite: 1]
+
+        // Otherwise, return a paginated list of all books
         return ResponseEntity.ok(bookService.getAllBooks(pageable));
     }
 
-    // Fetches a single book details
+    /**
+     * Fetches a single book details matching primitive identifiers.
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
-        return bookService.getBookById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Book> getBookById(@PathVariable Integer id) {
+        Optional<Book> book = bookService.getBookById(id);
+        return book.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    // Updates existing book info; validates input first[cite: 1]
+    /**
+     * Administrative entry persistence mapping.
+     * Accessible via: POST http://localhost:8080/api/books
+     */
+    @PostMapping
+    public ResponseEntity<Book> createBook(@RequestBody Book book) {
+        Book savedBook = bookService.createBook(book);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
+    }
+
+    /**
+     * Relational attribute modifications processing transaction pipeline.
+     */
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @Valid @RequestBody Book bookDetails) {
+    public ResponseEntity<Book> updateBook(@PathVariable Integer id, @RequestBody Book bookDetails) {
         try {
             Book updatedBook = bookService.updateBook(id, bookDetails);
             return ResponseEntity.ok(updatedBook);
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
-    // Removes a book from the database
+    /**
+     * Erases targets safely from active database memory contexts.
+     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteBook(@PathVariable Integer id) {
         try {
             bookService.deleteBook(id);
             return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 }

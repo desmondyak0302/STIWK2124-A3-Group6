@@ -24,6 +24,17 @@
       </div>
 
       <div class="form-group">
+        <label for="email">Email Address:</label>
+        <input 
+          type="email" 
+          id="email" 
+          [(ngModel)]="accountData.email" 
+          name="email" 
+          placeholder="Enter valid email address" 
+          required />
+      </div>
+
+      <div class="form-group">
         <label for="password">Password:</label>
         <input 
           type="password" 
@@ -32,6 +43,32 @@
           name="password" 
           placeholder="Enter secure password" 
           required />
+      </div>
+
+      <div class="form-group">
+        <label style="display: block; margin-bottom: 8px; font-weight: bold;">Account Type:</label>
+        
+        <div class="radio-option" style="margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+          <input 
+            type="radio" 
+            id="roleStudent" 
+            name="role" 
+            value="STUDENT" 
+            [checked]="accountData.role === 'STUDENT'"
+            (change)="accountData.role = 'STUDENT'" />
+          <label for="roleStudent" style="font-weight: normal; margin: 0; cursor: pointer;">Student (View Only)</label>
+        </div>
+
+        <div class="radio-option" style="display: flex; align-items: center; gap: 8px;">
+          <input 
+            type="radio" 
+            id="roleAdmin" 
+            name="role" 
+            value="ADMIN" 
+            [checked]="accountData.role === 'ADMIN'"
+            (change)="accountData.role = 'ADMIN'" />
+          <label for="roleAdmin" style="font-weight: normal; margin: 0; cursor: pointer;">Admin (Add & Delete Books)</label>
+        </div>
       </div>
 
       <button type="submit" class="btn-submit">Submit Account Data</button>

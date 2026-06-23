@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 
 @Service
@@ -14,47 +15,69 @@ public class BookService {
     @Autowired
     private BookRepository bookRepository;
 
-    /**
-     * STUDENT B TASK: PAGINATION LOGIC
-     * Fetches a specific "slice" of books from the database.
-     * Prevents the app from crashing if there are thousands of books.
-     */
     public Page<Book> getAllBooks(Pageable pageable) {
         return bookRepository.findAll(pageable);
     }
 
-    /**
-     * STUDENT B TASK: SEARCH LOGIC
-     * Uses the custom repository method to find books by keyword (q).
-     * This is a requirement for Phase 4 of our assignment.
-     */
-    public Page<Book> searchBooks(String q, Pageable pageable) {
-        return bookRepository.findByTitleContainingIgnoreCase(q, pageable);
+    public Optional<Book> getBookById(Integer id) {
+        return bookRepository.findById(id);
     }
 
-    // Standard CRUD - Create
+    // --- CREATE METHODS ---
+    public Book saveBook(Book book) {
+        return bookRepository.save(book);
+    }
+
+    /**
+     * FIXES: "cannot find symbol method createBook(arl.entity.Book)"
+     * Maps to your BookController call smoothly.
+     */
     public Book createBook(Book book) {
         return bookRepository.save(book);
     }
 
-    // Standard CRUD - Read by ID
-    public Optional<Book> getBookById(Long id) {
-        return bookRepository.findById(id);
-    }
-
-    // Standard CRUD - Update with error handling
-    public Book updateBook(Long id, Book bookDetails) {
-        return bookRepository.findById(id).map(book -> {
-            book.setTitle(bookDetails.getTitle());
-            book.setAuthor(bookDetails.getAuthor());
-            book.setCategory(bookDetails.getCategory());
-            book.setShortDescription(bookDetails.getShortDescription());
-            return bookRepository.save(book);
-        }).orElseThrow(() -> new RuntimeException("Book not found"));
-    }
-
-    // Standard CRUD - Delete
-    public void deleteBook(Long id) {
+    public void deleteBook(Integer id) {
         bookRepository.deleteById(id);
+    }
+
+    public Book updateBook(Integer id, Book bookDetails) {
+        return bookRepository.findById(id).map(book -> {
+            if (bookDetails.getTitle() != null) {
+                book.setTitle(bookDetails.getTitle());
+            }
+            if (bookDetails.getShortDescription() != null) {
+                book.setShortDescription(bookDetails.getShortDescription());
+            }
+            if (bookDetails.getLanguage() != null) {
+                book.setLanguage(bookDetails.getLanguage());
+            }
+            if (bookDetails.getPublicationDate() != null) {
+                book.setPublicationDate(bookDetails.getPublicationDate());
+            }
+            if (bookDetails.getAuthorId() != null) {
+                book.setAuthorId(bookDetails.getAuthorId());
+            }
+            if (bookDetails.getVendorId() != null) {
+                book.setVendorId(bookDetails.getVendorId());
+            }
+            if (bookDetails.getCategoryId() != null) {
+                book.setCategoryId(bookDetails.getCategoryId());
+            }
+            return bookRepository.save(book);
+        }).orElseThrow(() -> new RuntimeException("Book record not found with id " + id));
+    }
+
+    // --- SEARCH METHODS ---
+    public Page<Book> searchBooks(String title, Pageable pageable) {
+        return bookRepository.findByTitleContainingIgnoreCase(title, pageable);
+    }
+
+    /**
+     * FIXES: "cannot find symbol method
+     * searchBooksByTitle(java.lang.String,org.springframework.data.domain.Pageable)"
+     * Maps to your BookController search call smoothly.
+     */
+    public Page<Book> searchBooksByTitle(String title, Pageable pageable) {
+        return bookRepository.findByTitleContainingIgnoreCase(title, pageable);
     }
 }
