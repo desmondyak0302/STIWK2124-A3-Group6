@@ -7,6 +7,18 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const method = req.method;
 
+  // Bypass token injection for authentication endpoints (login/register)
+  if (req.url.includes('/api/auth/')) {
+    return next(req).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 0 || error.status >= 500) {
+          alert('⚠️ Connection Timeout or Backend Server Down! Please try again later.');
+        }
+        return throwError(() => error);
+      })
+    );
+  }
+
   // ONLY enforce token injection on mutating database modification requests
   if (method === 'POST' || method === 'PUT' || method === 'DELETE') {
     const token = authService.getAuthHeader();
@@ -22,6 +34,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       return next(secureReq).pipe(
         catchError((error: HttpErrorResponse) => {
           if (error.status === 401) {
+            authService.logout(); // Clear invalid token
             alert('🔒 Unauthorized! Session invalid or credentials missing.');
           } else if (error.status === 0 || error.status >= 500) {
             alert('⚠️ Connection Timeout or Backend Server Down! Please try again later.');
