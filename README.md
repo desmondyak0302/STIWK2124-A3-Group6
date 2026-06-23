@@ -29,3 +29,9 @@ To stop the containers and clean up the network, press `Ctrl+C`, then run:
 \`\`\`bash
 docker-compose down
 \`\`\`
+
+when u want to use docker 
+1. Download Docker
+2. after clone from github
+3. type docker-compose up --build
+4. 
