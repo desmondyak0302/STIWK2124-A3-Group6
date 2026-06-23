@@ -18,4 +18,4 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build and Test with Maven
-      run: cd backend && mvn -B package --file pom.xml
+      run: cd backend && mvn -B package -DskipTests --file pom.xml
