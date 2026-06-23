@@ -48,21 +48,14 @@ public class BookService {
             if (bookDetails.getShortDescription() != null) {
                 book.setShortDescription(bookDetails.getShortDescription());
             }
-            if (bookDetails.getLanguage() != null) {
-                book.setLanguage(bookDetails.getLanguage());
+            // --- UPDATED: Replaced old ID/Date checks with the new flat fields ---
+            if (bookDetails.getAuthor() != null) {
+                book.setAuthor(bookDetails.getAuthor());
             }
-            if (bookDetails.getPublicationDate() != null) {
-                book.setPublicationDate(bookDetails.getPublicationDate());
+            if (bookDetails.getCategory() != null) {
+                book.setCategory(bookDetails.getCategory());
             }
-            if (bookDetails.getAuthorId() != null) {
-                book.setAuthorId(bookDetails.getAuthorId());
-            }
-            if (bookDetails.getVendorId() != null) {
-                book.setVendorId(bookDetails.getVendorId());
-            }
-            if (bookDetails.getCategoryId() != null) {
-                book.setCategoryId(bookDetails.getCategoryId());
-            }
+            
             return bookRepository.save(book);
         }).orElseThrow(() -> new RuntimeException("Book record not found with id " + id));
     }
